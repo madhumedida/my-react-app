@@ -5,7 +5,7 @@ interface FormData {
   phone: string
 }
 
-interface User {
+export interface User {
   id: string
   firstName: string
   lastName: string
@@ -13,14 +13,19 @@ interface User {
   phone: string
 }
 
+const API_BASE = 'http://localhost:3000/usermanagement'
+
+const parseResponse = async <T>(response: Response): Promise<T> => {
+  if (!response.ok) {
+    throw new Error(`Server error ${response.status}`)
+  }
+  return response.json()
+}
+
 export const GetAllUsers = () => {
   const fetchAllUsers = async () => {
-    const resp = await fetch('http://localhost:3000/usermanagement/getall')
-    if (!resp.ok) {
-      throw new Error(`Failed to fetch users: ${resp.status}`)
-    }
-    const data = await resp.json()
-    return data as User[]
+    const resp = await fetch(`${API_BASE}/getall`)
+    return parseResponse<User[]>(resp)
   }
 
   return {
@@ -30,16 +35,12 @@ export const GetAllUsers = () => {
 
 export const Adduser = () => {
   const submitForm = async (formData: FormData) => {
-    const resp = await fetch('http://localhost:3000/usermanagement/add', {
+    const resp = await fetch(`${API_BASE}/add`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     })
-    if (!resp.ok) {
-      throw new Error(`Server error ${resp.status}`)
-    }
-    const result = await resp.json()
-    return result
+    return parseResponse<unknown>(resp)
   }
 
   return {
@@ -49,14 +50,10 @@ export const Adduser = () => {
 
 export const DeleteUser = () => {
   const deleteUser = async (userId: string) => {
-    const resp = await fetch(`http://localhost:3000/usermanagement/${userId}`, {
+    const resp = await fetch(`${API_BASE}/${userId}`, {
       method: 'DELETE',
     })
-    if (!resp.ok) {
-      throw new Error(`Server error ${resp.status}`)
-    }
-    const result = await resp.json()
-    return result
+    return parseResponse<unknown>(resp)
   }
 
   return {
@@ -66,16 +63,12 @@ export const DeleteUser = () => {
 
 export const EditUser = () => {
   const editUser = async (userId: string, formData: FormData) => {
-    const resp = await fetch(`http://localhost:3000/usermanagement/${userId}`, {
+    const resp = await fetch(`${API_BASE}/${userId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     })
-    if (!resp.ok) {
-      throw new Error(`Server error ${resp.status}`)
-    }
-    const result = await resp.json()
-    return result
+    return parseResponse<unknown>(resp)
   }
 
   return {

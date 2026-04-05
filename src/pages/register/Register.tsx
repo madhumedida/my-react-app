@@ -1,13 +1,24 @@
 import React, { useState } from 'react'
+import { useAtom } from 'jotai'
 import { Adduser } from '../../services/Manageuser'
 import { validateRegisterForm } from '../../validations/register/register-val'
+import { usersAtom } from '../../hooks/userAtoms'
+import type { User } from '../../hooks/userAtoms'
+
+type FormErrors = {
+  firstName?: string
+  lastName?: string
+  email?: string
+  phone?: string
+}
 
 const Register: React.FC = () => {
+  const [users, setUsers] = useAtom(usersAtom)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({})
+  const [errors, setErrors] = useState<FormErrors>({})
 
   const { submitForm } = Adduser()
 
@@ -29,7 +40,9 @@ const Register: React.FC = () => {
       setErrors({})
       try {
         const result = await submitForm(formData)
-        console.log('response', result)
+        const createdUser: User = result as User
+
+        setUsers([...users, createdUser])
         alert('Form submitted successfully')
         resetForm()
       } catch (err) {
@@ -42,13 +55,14 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div>
-      <div>
-        <h2>Create Account</h2>
-        
-        <form onSubmit={handleSubmit} noValidate>
-          <div>
-            <label htmlFor="firstName">
+    <section className="page-content">
+      <div className="section-card">
+        <h1 className="section-title">Create Account</h1>
+        <p className="section-description">Fill in the details below to register a new user.</p>
+
+        <form onSubmit={handleSubmit} noValidate className="form-grid">
+          <div className="form-field">
+            <label className="form-label" htmlFor="firstName">
               First Name
             </label>
             <input
@@ -57,11 +71,13 @@ const Register: React.FC = () => {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="John"
+              className="form-input"
             />
+            {errors.firstName && <span className="form-error">{errors.firstName}</span>}
           </div>
 
-          <div>
-            <label htmlFor="lastName">
+          <div className="form-field">
+            <label className="form-label" htmlFor="lastName">
               Last Name
             </label>
             <input
@@ -70,11 +86,13 @@ const Register: React.FC = () => {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Doe"
+              className="form-input"
             />
+            {errors.lastName && <span className="form-error">{errors.lastName}</span>}
           </div>
 
-          <div>
-            <label htmlFor="email">
+          <div className="form-field">
+            <label className="form-label" htmlFor="email">
               Email Address
             </label>
             <input
@@ -82,16 +100,14 @@ const Register: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               placeholder="john@example.com"
+              className="form-input"
             />
-            {errors.email && (
-              <span>{errors.email}</span>
-            )}
+            {errors.email && <span className="form-error">{errors.email}</span>}
           </div>
 
-          <div>
-            <label htmlFor="phone">
+          <div className="form-field">
+            <label className="form-label" htmlFor="phone">
               Phone Number
             </label>
             <input
@@ -99,26 +115,27 @@ const Register: React.FC = () => {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              required
               placeholder="1234567890"
+              className="form-input"
             />
-            {errors.phone && (
-              <span>{errors.phone}</span>
-            )}
+            {errors.phone && <span className="form-error">{errors.phone}</span>}
           </div>
 
-          <button
-            type="submit"
-          >
-            Create Account
-          </button>
+          <div className="form-actions">
+            <button type="submit" className="btn-primary">
+              Create Account
+            </button>
+            <button type="button" className="btn-secondary" onClick={resetForm}>
+              Reset
+            </button>
+          </div>
         </form>
 
-        <p>
+        <p className="info-text">
           Already have an account? <a href="#">Sign in</a>
         </p>
       </div>
-    </div>
+    </section>
   )
 }
 

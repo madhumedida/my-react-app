@@ -1,4 +1,6 @@
 interface FormErrors {
+  firstName?: string
+  lastName?: string
   email?: string
   phone?: string
 }
@@ -12,6 +14,14 @@ interface FormData {
 
 export const validateRegisterForm = (formData: FormData): FormErrors => {
   const errors: FormErrors = {}
+
+  if (!formData.firstName.trim()) {
+    errors.firstName = 'Please enter a first name'
+  }
+
+  if (!formData.lastName.trim()) {
+    errors.lastName = 'Please enter a last name'
+  }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailPattern.test(formData.email)) {

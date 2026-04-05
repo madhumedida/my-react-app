@@ -2,36 +2,41 @@ import React from 'react'
 
 const Login: React.FC = () => {
   return (
-    <div>
-      <div>
-        <h2>Sign In</h2>
-        <form>
-          <div>
-            <label>
+    <section className="page-content">
+      <div className="section-card">
+        <h1 className="section-title">Sign In</h1>
+        <p className="section-description">Enter your credentials to access your account</p>
+        <form className="form-grid">
+          <div className="form-field">
+            <label className="form-label" htmlFor="email">
               Email Address
             </label>
             <input
+              id="email"
+              className="form-input"
               type="email"
               placeholder="you@example.com"
             />
           </div>
-          <div>
-            <label>
+          <div className="form-field">
+            <label className="form-label" htmlFor="password">
               Password
             </label>
             <input
+              id="password"
+              className="form-input"
               type="password"
               placeholder="••••••••"
             />
           </div>
-          <button
-            type="submit"
-          >
-            Sign In
-          </button>
+          <div className="form-actions">
+            <button type="submit" className="btn-primary">
+              Sign In
+            </button>
+          </div>
         </form>
       </div>
-    </div>
+    </section>
   )
 }
 

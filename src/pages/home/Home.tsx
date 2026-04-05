@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { DeleteUser, EditUser, GetAllUsers } from '../../services/Manageuser'
-
-interface User {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-}
+import { useAtom } from 'jotai'
+import { usersAtom } from '../../hooks/userAtoms'
+import { DeleteUser, GetAllUsers } from '../../services/Manageuser'
 
 const Home: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useAtom(usersAtom)
   const [loading, setLoading] = useState(true)
   const { deleteUser } = DeleteUser()
-  const { editUser } = EditUser()
   const { fetchAllUsers } = GetAllUsers()
 
   useEffect(() => {
     loadUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadUsers = async () => {
@@ -33,136 +27,105 @@ const Home: React.FC = () => {
   }
 
   const handleDelete = async (userId: string) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await deleteUser(userId)
-        setUsers(users.filter(user => user.id !== userId))
-        alert('User deleted successfully')
-      } catch (err) {
-        console.error('Error deleting user:', err)
-        alert('Failed to delete user')
-      }
+    if (!window.confirm('Are you sure you want to delete this user?')) {
+      return
+    }
+
+    try {
+      await deleteUser(userId)
+      setUsers(users.filter((user) => user.id !== userId))
+      alert('User deleted successfully')
+    } catch (err) {
+      console.error('Error deleting user:', err)
+      alert('Failed to delete user')
     }
   }
 
   const handleEdit = (userId: string) => {
-    // Navigate to edit page or open edit modal
+    // Placeholder for future edit popup implementation
     console.log('Edit user:', userId)
-    alert('Edit functionality to be implemented')
+    alert('Edit functionality will be added in a later update.')
   }
 
   return (
-    <div>
-      <div>
-        <h2>Welcome Home</h2>
-        <p>This is your application dashboard. Navigate through the menu to explore different sections.</p>
+    <section className="page-content">
+      <div className="page-header">
         <div>
-          <Link to="/register">
-            <div>
-              <h3>📋 Register</h3>
-              <p>Create a new account</p>
-            </div>
-          </Link>
-          <Link to="/login">
-            <div>
-              <h3>🔐 Login</h3>
-              <p>Access your account</p>
-            </div>
-          </Link>
-
-          <div id="table">
-            <h2>Registered Users</h2>
-            {loading ? (
-              <p>Loading users...</p>
-            ) : (
-              <>
-                <div style={{ 
-                  backgroundColor: '#f5f5f5', 
-                  padding: '10px', 
-                  marginBottom: '10px',
-                  borderRadius: '4px',
-                  fontWeight: 'bold'
-                }}>
-                  <p>User Management System - Total Users: {users.length + 1}</p>
-                </div>
-                <table border={1} cellPadding="10" cellSpacing="0" style={{ width: '100%' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#e0e0e0' }}>
-                      <th>First Name</th>
-                      <th>Last Name</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Hardcoded entry */}
-                    <tr style={{ backgroundColor: '#fffacd' }}>
-                      <td>John</td>
-                      <td>Doe</td>
-                      <td>john.doe@example.com</td>
-                      <td>1234567890</td>
-                      <td>
-                        <button 
-                          onClick={() => handleEdit('hardcoded-1')}
-                          style={{ marginRight: '10px' }}
-                          title="Edit"
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          onClick={() => handleDelete('hardcoded-1')}
-                          title="Delete"
-                          style={{ color: 'red' }}
-                        >
-                          🗑️
-                        </button>
-                      </td>
-                    </tr>
-                    {/* Dynamic entries */}
-                    {users.map((user) => (
-                      <tr key={user.id}>
-                        <td>{user.firstName}</td>
-                        <td>{user.lastName}</td>
-                        <td>{user.email}</td>
-                        <td>{user.phone}</td>
-                        <td>
-                          <button 
-                            onClick={() => handleEdit(user.id)}
-                            style={{ marginRight: '10px' }}
-                            title="Edit"
-                          >
-                            ✏️
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(user.id)}
-                            title="Delete"
-                            style={{ color: 'red' }}
-                          >
-                            🗑️
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div style={{ 
-                  backgroundColor: '#f5f5f5', 
-                  padding: '10px', 
-                  marginTop: '10px',
-                  borderRadius: '4px',
-                  textAlign: 'right',
-                  fontStyle: 'italic'
-                }}>
-                  <p>Showing {users.length + 1} of {users.length + 1} users</p>
-                </div>
-              </>
-            )}
-          </div>
-
+          <h1 className="page-title">Welcome Home</h1>
+          <p className="page-description">
+            This is your application dashboard. Navigate through the menu to explore different sections.
+          </p>
         </div>
       </div>
-    </div>
+
+      <div className="card-grid">
+        <article className="info-card">
+          <h3>📋 Register</h3>
+          <p>Create a new account using the registration page.</p>
+          <Link className="btn-secondary" to="/register">
+            Go to Register
+          </Link>
+        </article>
+
+        <article className="info-card">
+          <h3>🔐 Login</h3>
+          <p>Access your account through the login page.</p>
+          <Link className="btn-secondary" to="/login">
+            Go to Login
+          </Link>
+        </article>
+      </div>
+
+      <div className="section-card">
+        <div className="section-heading">
+          <div>
+            <h2 className="section-title">Registered Users</h2>
+            <p className="section-description">
+              This table shows the current users stored by the application.
+            </p>
+          </div>
+          <span className="user-count">Total users: {users.length}</span>
+        </div>
+
+        {loading ? (
+          <p className="status-message">Loading users...</p>
+        ) : users.length === 0 ? (
+          <p className="status-message">No registered users found.</p>
+        ) : (
+          <div className="table-wrapper">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.email}</td>
+                    <td>{user.phone}</td>
+                    <td className="actions-cell">
+                      <button onClick={() => handleEdit(user.id)} className="btn-secondary" type="button">
+                        ✏️ Edit
+                      </button>
+                      <button onClick={() => handleDelete(user.id)} className="btn-danger" type="button">
+                        🗑️ Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }
 

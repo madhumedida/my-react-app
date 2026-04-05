@@ -6,14 +6,14 @@ import React from 'react'
 
 const Layout: React.FC = () => {
   return (
-<div>
+    <div className="app-shell">
       <Nav />
       <Header />
-      <main>
+      <main className="main-content">
         <Outlet />
       </main>
-      <Footer/>
-</div>
+      <Footer />
+    </div>
   )
 }
 
