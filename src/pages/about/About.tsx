@@ -2,10 +2,10 @@ import React from 'react'
 
 const About: React.FC = () => {
   return (
-    <div>
-      <div>
-        <h2>About Us</h2>
-        <div>
+    <section className="page-content">
+      <div className="section-card">
+        <h1 className="section-title">About Us</h1>
+        <div className="section-description">
           <p>
             Welcome to My React App, a modern web application built with React, TypeScript, and Tailwind CSS.
           </p>
@@ -14,7 +14,7 @@ const About: React.FC = () => {
           </p>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 
